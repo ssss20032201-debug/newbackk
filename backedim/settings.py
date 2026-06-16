@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'drf_spectacular_sidecar',
     # local
     'accounts',
+    'families',
 ]
 
 MIDDLEWARE = [
