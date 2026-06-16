@@ -1,8 +1,8 @@
+from drf_spectacular.utils import extend_schema, OpenApiResponse
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenRefreshView
 
 from .serializers import (
     RegisterSerializer,
@@ -15,6 +15,13 @@ from .serializers import (
 class RegisterView(APIView):
     permission_classes = (AllowAny,)
 
+    @extend_schema(
+        summary="Ro'yxatdan o'tish",
+        description="Yangi foydalanuvchi (parent yoki child) yaratish. JWT tokenlar qaytaradi.",
+        request=RegisterSerializer,
+        responses={201: OpenApiResponse(description="Muvaffaqiyatli ro'yxatdan o'tildi, JWT qaytarildi")},
+        tags=["Auth"],
+    )
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -25,6 +32,13 @@ class RegisterView(APIView):
 class LoginView(APIView):
     permission_classes = (AllowAny,)
 
+    @extend_schema(
+        summary="Kirish",
+        description="Email va parol bilan kirish. JWT access + refresh token qaytaradi.",
+        request=LoginSerializer,
+        responses={200: OpenApiResponse(description="JWT tokenlar qaytarildi")},
+        tags=["Auth"],
+    )
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -32,28 +46,37 @@ class LoginView(APIView):
 
 
 class PasswordResetRequestView(APIView):
-    """Emailga 6 raqamli OTP kod yuborish"""
     permission_classes = (AllowAny,)
 
+    @extend_schema(
+        summary="Parol tiklash — kod yuborish",
+        description="Emailga 6 raqamli OTP kod yuboradi. Kod 10 daqiqa amal qiladi.",
+        request=PasswordResetRequestSerializer,
+        responses={200: OpenApiResponse(description="Kod yuborildi (yoki foydalanuvchi topilmasa ham xuddi shu javob)")},
+        tags=["Auth"],
+    )
     def post(self, request):
         serializer = PasswordResetRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(
-            {'detail': 'Agar bu email ro\'yxatdan o\'tgan bo\'lsa, kod yuborildi.'},
+            {'detail': "Agar bu email ro'yxatdan o'tgan bo'lsa, kod yuborildi."},
             status=status.HTTP_200_OK,
         )
 
 
 class PasswordResetConfirmView(APIView):
-    """OTP kodni tekshirib yangi parol o'rnatish"""
     permission_classes = (AllowAny,)
 
+    @extend_schema(
+        summary="Parol tiklash — kodni tasdiqlash",
+        description="OTP kodni tekshirib yangi parol o'rnatadi.",
+        request=PasswordResetConfirmSerializer,
+        responses={200: OpenApiResponse(description="Parol muvaffaqiyatli yangilandi")},
+        tags=["Auth"],
+    )
     def post(self, request):
         serializer = PasswordResetConfirmSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({'detail': 'Parol muvaffaqiyatli yangilandi.'}, status=status.HTTP_200_OK)
-
-
-# TokenRefreshView — simplejwt'dan to'g'ridan-to'g'ri ishlatiladi, qayta yozish shart emas
