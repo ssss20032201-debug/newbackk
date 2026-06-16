@@ -14,7 +14,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'full_name', 'password', 'role')
+        fields = ('email', 'full_name', 'phone', 'password', 'role')
 
     def validate_email(self, value):
         if not value.endswith('@gmail.com'):
@@ -32,6 +32,7 @@ class RegisterSerializer(serializers.ModelSerializer):
                 'id': str(instance.id),
                 'email': instance.email,
                 'full_name': instance.full_name,
+                'phone': instance.phone,
                 'role': instance.role,
             },
             'access': str(refresh.access_token),
@@ -55,6 +56,7 @@ class LoginSerializer(serializers.Serializer):
                 'id': str(user.id),
                 'email': user.email,
                 'full_name': user.full_name,
+                'phone': user.phone,
                 'role': user.role,
             },
             'access': str(refresh.access_token),

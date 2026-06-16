@@ -27,6 +27,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=150)
+    phone = models.CharField(max_length=20, null=True, blank=True)
     role = models.CharField(max_length=10, choices=Role.choices, default=Role.PARENT)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     is_active = models.BooleanField(default=True)
