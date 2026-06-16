@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import User, PasswordResetCode
-from .utils import generate_otp, send_reset_code, send_welcome_email
+from .utils import generate_otp, send_reset_code
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -23,7 +23,6 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
-        send_welcome_email(user.email, user.full_name)
         return user
 
     def to_representation(self, instance):
