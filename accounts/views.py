@@ -54,6 +54,7 @@ class PasswordResetRequestView(APIView):
         request=PasswordResetRequestSerializer,
         responses={200: OpenApiResponse(description="Kod yuborildi (yoki foydalanuvchi topilmasa ham xuddi shu javob)")},
         tags=["Auth"],
+        
     )
     def post(self, request):
         serializer = PasswordResetRequestSerializer(data=request.data)
