@@ -75,4 +75,11 @@ def send_reset_code(email: str, code: str) -> None:
         to=[email],
     )
     msg.attach_alternative(html, "text/html")
-    msg.send(fail_silently=False)
+    try:
+        msg.send(fail_silently=False)
+    except Exception as e:
+        # Log the error but don't crash the server
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Email yuborishda xato ({email}): {e}")
+        raise  # re-raise so the view can return 500 with a proper JSON response

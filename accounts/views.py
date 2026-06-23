@@ -58,7 +58,13 @@ class PasswordResetRequestView(APIView):
     def post(self, request):
         serializer = PasswordResetRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        try:
+            serializer.save()
+        except Exception:
+            return Response(
+                {'detail': 'Email yuborishda xato yuz berdi. SMTP sozlamalarini tekshiring.'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         return Response(
             {'detail': "Agar bu email ro'yxatdan o'tgan bo'lsa, kod yuborildi."},
             status=status.HTTP_200_OK,
